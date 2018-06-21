@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'j06c8-8d_gsc4cynic_!4$e952csss%2r1&gh)exaxz31tm#q)'
+BUILD_ENV = os.getenv('BUILD_ENV')
 
 if BUILD_ENV == 'PRODUCTION':
     DEBUG = False
