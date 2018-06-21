@@ -161,11 +161,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets"),
 ]
 
-<<<<<<< HEAD
 STATIC_ROOT = "staticfiles"
-
-=======
->>>>>>> develop
 
 # Media configuration
 MEDIA_ROOT = "file_uploads"
