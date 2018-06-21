@@ -22,10 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'j06c8-8d_gsc4cynic_!4$e952csss%2r1&gh)exaxz31tm#q)'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if BUILD_ENV == 'PRODUCTION':
+    DEBUG = False
+else:
+    DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -48,6 +50,7 @@ INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,6 +88,18 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'HOST': 'db',
+        'PORT': 5432,
+    }
+}
+
+if DEBUG != True:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('KETABDAN_DB_NAME'),
+        'USER': os.getenv('KETABDAN_DB_USER'),
+        'HOST': os.getenv('KETABDAN_DB_HOST'),
+        'PASSWORD': os.getenv('KETABDAN_DB_PASSWORD'),
         'PORT': 5432,
     }
 }
@@ -144,6 +159,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets"),
 ]
+
+STATIC_ROOT = "staticfiles"
 
 
 # Media configuration
