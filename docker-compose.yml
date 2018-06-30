@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    container_name: ketabdan_db
+  web:
+    container_name: ketabdan_web
+    build:
+      context: .
+      dockerfile: Dockerfile-local
+    command: bash -c "python manage.py collectstatic --noinput & gunicorn ketabdan.wsgi -b 0.0.0.0:8000 --reload"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
