@@ -1,8 +1,10 @@
-from django.test import TestCase,client
+from django.test import TestCase,Client
 from .models import ShortStory
 from django.urls import reverse
 from shortstories.models import User,minute_count
 from .forms import ShortStoryForm
+from django.contrib.auth.models import User
+
 
 def create_shortstories(author, status, title, body, publication_date):
     return ShortStory.objects.create(author=author, status=status, title=title, body=body, publication_date=publication_date)
@@ -83,7 +85,27 @@ class ShortStoryFormTests(TestCase):
         form = ShortStoryForm(data={'author':user.id, 'status':'p', 'title':"Villette", 'body':"a"*3501, 'publication_date':'2000-08-30'})
         self.assertTrue(form.is_valid())
 
-class ShortstoriesCreateViewTests(TestCase):
+class ShortStoriesCreateViewTests(TestCase):
+
+    def setUp(self):
+        """
+        Set up is called before running these tests in the main class
+        """
+        user = User.objects.create(username='testuser')
+        user.set_password('12345') # you need to call set password to store the hash in DB
+        user.save()
+
     def  test_no_new_shortstory(self):
          response = self.client.get(reverse('shortstories:detail', args=(7645392,)))
          self.assertEquals(response.status_code, 404)
+
+    def test_loggedin_users_see_the_form(self):
+        login = self.client.login(username='testuser', password='12345')
+        self.assertTrue(login) 
+        response = self.client.get(reverse('shortstories:create'))
+        self.assertEquals(response.status_code, 200)
+    
+    def test_unauthenticated_users_get_redirected(self):
+        response = self.client.get(reverse('shortstories:create'))
+        expected_url = reverse('account_login') + "?next=" + reverse('shortstories:create')
+        self.assertRedirects(response, expected_url, status_code=302, target_status_code=200)
